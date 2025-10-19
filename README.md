@@ -1,0 +1,1 @@
+This is a project for HCW CSDC Introduction to AI.
