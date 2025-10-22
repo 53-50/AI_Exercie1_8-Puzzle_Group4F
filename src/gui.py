@@ -82,7 +82,7 @@ class SlidePuzzle:
             self.root.after(1000, self.update_timer)
 
     def check_win(self):
-        if self.tiles == list(range(1, self.size * self.size)) + [0]:
+        if self.tiles == list(range(self.size * self.size)):
             end_time = time.time()
             duration = int(end_time - self.start_time)
             messagebox.showinfo(f"You solved the puzzle in {self.moves} moves and {duration} seconds!")
