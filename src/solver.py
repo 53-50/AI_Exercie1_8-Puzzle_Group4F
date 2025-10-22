@@ -9,7 +9,7 @@ class Solver:
 
 
     # random numbers 1-8
-    def generate_random_st(self):
+    def generateRandomStartState(self):
         startState = [[0,1,2], [3,4,5], [6,7,8]]
         random.shuffle(startState)
 
