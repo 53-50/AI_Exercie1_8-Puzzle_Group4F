@@ -13,7 +13,7 @@ class Heuristics:
 
 
 
-    def manhattanDistance(self,state):
+    def manhattan(self, state):
         manhattan = 0
         for row in range(self.size):
             for col in range(self.size):
@@ -39,8 +39,8 @@ if __name__ == "__main__":
                    (2,4,7))
 
     heuristicsCalculator = Heuristics(goalState)
-    manhattanDistance1 = heuristicsCalculator.manhattanDistance(startState1)
-    manhattanDistance2 = heuristicsCalculator.manhattanDistance(startState2)
+    manhattanDistance1 = heuristicsCalculator.manhattan(startState1)
+    manhattanDistance2 = heuristicsCalculator.manhattan(startState2)
 
     print(manhattanDistance1)
     print(manhattanDistance2)
