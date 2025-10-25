@@ -1,0 +1,4 @@
+2025-10-25 15:22:17 - Heuristic: manhattan, Mean runtime: 0.0163 s, Standard runtime: 0.0201 s
+2025-10-25 15:22:17 - Heuristic: hamming, Mean runtime: 0.1771 s, Standard runtime: 0.1920 s
+2025-10-25 15:53:55 - Heuristic: manhattan, Mean runtime: 0.0144 s, Standard runtime: 0.0202 s
+2025-10-25 15:53:55 - Heuristic: hamming, Mean runtime: 0.2000 s, Standard runtime: 0.1976 s
