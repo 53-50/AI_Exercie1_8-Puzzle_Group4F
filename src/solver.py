@@ -1,3 +1,16 @@
+"""
+A* solver for the using the heuristics.
+
+Inputs:
+    - startState: tuple[tuple[int]]
+    - goalState:  tuple[tuple[int]]
+    - heuristic:  Literal["manhattan", "hamming"]
+
+Outputs:
+    - path: list of states (from start to goal), or None if not found
+    - nodesExpanded: int  # used as memory effort proxy per assignment
+"""
+
 import heapq
 import random
 import time
@@ -5,7 +18,9 @@ import statistics
 from datetime import datetime
 from heuristics import Heuristics
 
-# helper to flatten 2D board to 1D
+# -----------------------------------------------------------------------------
+# Helper to flatten 2D board to 1D
+# -----------------------------------------------------------------------------
 def flatten(state):
     """
     Flatten a 2D board (tuple of tuples) into a 1D list
@@ -18,6 +33,9 @@ def flatten(state):
     """
     return [tile for row in state for tile in row]
 
+# -----------------------------------------------------------------------------
+# Solver
+# -----------------------------------------------------------------------------
 class Solver:
     """
     A* 8-Puzzle Solver
@@ -36,6 +54,9 @@ class Solver:
         self.goalState = ((0,1,2), (3,4,5), (6,7,8))
         self.heuristic = Heuristics(self.goalState)
 
+    # -------------------------------------------------------------------------
+    # Board generation & checks
+    # -------------------------------------------------------------------------
     def generateRandomSolvableBoard(self):
         """
         Generate random solvable board as a tuple of tuples
@@ -72,7 +93,6 @@ class Solver:
         Returns: bool (True if solvable, else False)
         """
         inversionCounter = 0
-
         # iterating through the list
         for i in range(len(state)):
             # iterating through the list what follows after the i in this list
@@ -85,7 +105,9 @@ class Solver:
 
         return inversionCounter % 2 == 0
 
-    # generate all possible moves (up, down, left, right) from current state
+    # -------------------------------------------------------------------------
+    # State expansion
+    # -------------------------------------------------------------------------
     def neighbors(self, state):
         """
         Generate all valid neighbor states by sliding the blank (0) up/down/left/right.
@@ -136,6 +158,9 @@ class Solver:
 
         return neighbors
 
+    # -------------------------------------------------------------------------
+    # A* cost utilities
+    # -------------------------------------------------------------------------
     def calculateCosts(self, state, g, heuristic):
         """
         Calculate total cost f = g + h for a given state
@@ -166,6 +191,9 @@ class Solver:
 
         return g + h, g, h
 
+    # -------------------------------------------------------------------------
+    # A* search
+    # -------------------------------------------------------------------------
     def solve(self, startState, goalState, heuristic):
         """
         Solve the 8-puzzle using A* search.
@@ -224,7 +252,9 @@ class Solver:
         return None, nodesExpanded
 
 
-    # run 100 random solvable states per heuristic, measure time & nodes, compute statistics
+    # -------------------------------------------------------------------------
+    # Benchmarks
+    # -------------------------------------------------------------------------
     def runBenchmark(self):
         """
         Run A* search on 100 random solvable boards for both heuristics
@@ -282,7 +312,9 @@ class Solver:
 
         return results
 
-# TESTING
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
 if __name__ == "__main__":
 
     solver = Solver()

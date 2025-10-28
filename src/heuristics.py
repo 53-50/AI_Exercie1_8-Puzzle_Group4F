@@ -1,9 +1,22 @@
-class Heuristics:
-    """
-    A class for heuristic functions used in the 8-puzzle problem
-    Stores goal positions of each tile and computes manhattan/hamming distance
-    """
+"""
+Heuristic functions:
 
+This module provides two admissible heuristics used with A*:
+- Manhattan distance (sum of |Δrow| + |Δcol| for all tiles)
+- Hamming distance (count of misplaced tiles, excluding blank)
+
+Inputs:
+    - goalState: tuple[tuple[int]]  # e.g., ((0,1,2),(3,4,5),(6,7,8))
+    - state:     tuple[tuple[int]]  # any 3x3 configuration
+
+Outputs:
+    - int heuristic values
+
+Complexity:
+    - Both heuristics run in O(n^2) over an n×n board (here n=3).
+"""
+
+class Heuristics:
     def __init__(self, goalState):
         """
         Constructor
@@ -44,6 +57,9 @@ class Heuristics:
             if len(row) != self.size:
                 raise ValueError("One or more rows in the state have incorrect length.")
 
+    # -----------------------------------------------------------------------------
+    # Heuristic: Manhattan
+    # -----------------------------------------------------------------------------
     def manhattan(self, state):
         """
         Computes manhattan distance heuristic
@@ -77,6 +93,9 @@ class Heuristics:
                     manhattan += abs(row - goalRow) + abs(col - goalCol)
         return manhattan
 
+    # -----------------------------------------------------------------------------
+    # Heuristic: Hamming
+    # -----------------------------------------------------------------------------
     def hamming(self, state):
         """
         Computes hamming distance heuristic
@@ -107,7 +126,9 @@ class Heuristics:
                         hamming += 1
         return hamming
 
-# TESTING
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
 if __name__ == "__main__":
     print("heuristics Class Test")
     goalState = ((0,1,2),

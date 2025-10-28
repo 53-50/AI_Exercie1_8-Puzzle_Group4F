@@ -1,6 +1,20 @@
+"""
+Tkinter-based GUI for this exercise.
+
+Main features:
+- Visual 3×3 grid of buttons representing tiles.
+- Allows manual moves by clicking adjacent tiles.
+- Starts A* solver (Manhattan or Hamming) and animates the solution path.
+- Displays moves, runtime, heuristic values, and solver logs.
+- Supports running a 100-board benchmark for performance comparison.
+
+Dependencies:
+    - solver.Solver (A* implementation)
+    - heuristics.Heuristics (Manhattan & Hamming distance)
+"""
+
 import tkinter as tk
 from tkinter import messagebox
-import random
 import time
 from datetime import datetime
 from solver import Solver, flatten
@@ -9,6 +23,7 @@ from heuristics import Heuristics
 
 class SlidePuzzleGUI:
     def __init__(self, root):
+        """Initialize all GUI elements, the solver, and the heuristic calculator."""
         self.root = root
         self.root.title("AI Heuristic Solve")
 
@@ -33,9 +48,12 @@ class SlidePuzzleGUI:
         self.create_widgets()
         self.shuffle_tiles()
 
+    # -------------------------------------------------------------------------
+    # GUI Creation
+    # -------------------------------------------------------------------------
 
     def create_widgets(self):
-
+        """Builds all Tkinter widgets: grid, controls, and log panel."""
         grid_frame = tk.Frame(self.root, padx=10, pady=10)
         grid_frame.grid(row=0, column=0, rowspan=2, sticky='n')
 
@@ -115,7 +133,12 @@ class SlidePuzzleGUI:
         self.log_message("GUI initialized.")
         self.log_message(f"Goal State: {self.goalState}")
 
+    # -------------------------------------------------------------------------
+    # Logging
+    # -------------------------------------------------------------------------
+
     def log_message(self, message, color="black"):
+        """Append a timestamped message to the activity log."""
         timestamp = datetime.now().strftime("[%H:%M:%S]")
 
         self.log_text.config(state=tk.NORMAL)
@@ -126,10 +149,12 @@ class SlidePuzzleGUI:
         self.log_text.see(tk.END)
         self.log_text.config(state=tk.DISABLED)
 
-    ## Game Logic
-    # --------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # Game Logic
+    # -------------------------------------------------------------------------
 
     def shuffle_tiles(self):
+        """Generates and displays a new random solvable board."""
         state_2d = self.solver.generateRandomSolvableBoard()
         self.tiles = flatten(state_2d)
 
@@ -144,17 +169,16 @@ class SlidePuzzleGUI:
         self.log_message("New solvable board generated.")
 
     def move_tile(self, i, j):
-        """
-        Handles user clicks on a tile to move it into the blank space.
-        """
+        """Handles user clicks on a tile to move it into the blank space."""
         if self.is_solving:
-            return
+            return # ignore clicks during animation or solving
 
         current_index = i * self.size + j
 
         empty_index = self.tiles.index(0)
         empty_row, empty_col = divmod(empty_index, self.size)
 
+        # move allowed only if tile is directly adjacent to the blank
         if abs(empty_row - i) + abs(empty_col - j) == 1:
             self.tiles[empty_index], self.tiles[current_index] = self.tiles[current_index], self.tiles[empty_index]
             self.moves += 1
@@ -167,8 +191,6 @@ class SlidePuzzleGUI:
         """Checks if the current state is the goal state."""
         goal_1d = flatten(self.goalState)
         if self.tiles == goal_1d:
-
-
             self.moves = 0
             self.moves_label.config(text="Moves: 0")
 
@@ -187,8 +209,9 @@ class SlidePuzzleGUI:
         self.log_message("Game reset.")
         self.shuffle_tiles()
 
-    ## Utility Functions
-    # --------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # Utility Functions
+    # -------------------------------------------------------------------------
 
     def update_buttons(self):
         """Updates the text and color of all buttons based on the current self.tiles state."""
@@ -196,10 +219,12 @@ class SlidePuzzleGUI:
             for j in range(self.size):
                 tile = self.tiles[i * self.size + j]
                 text = str(tile) if tile != 0 else ""
-
                 button = self.buttons[i][j]
+
+                # Disable buttons while solving
                 button.config(text=text, state=tk.NORMAL if not self.is_solving else tk.DISABLED)
 
+                # Visual color difference for blank vs normal tiles
                 if tile == 0:
                     button.config(bg="lightgray", activebackground="lightgray")
                 else:
@@ -224,8 +249,9 @@ class SlidePuzzleGUI:
             if self.is_solving:
                 self.root.after(100, self.update_timer)
 
-    ## Solver Integration
-    # --------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # Solver Integration
+    # -------------------------------------------------------------------------
 
     def get_current_state_2d(self):
         """Converts the GUI's 1D list state to the 2D tuple-of-tuples format for the Solver."""
@@ -239,9 +265,7 @@ class SlidePuzzleGUI:
         self.tiles = flatten(state_2d)
 
     def run_single_benchmark(self, heuristic):
-        """
-        Runs the full 100-board benchmark using the Solver and logs the results.
-        """
+        """Runs the full 100-board benchmark using the Solver and logs the results."""
         if self.is_solving:
             self.log_message("Benchmark is already running. Please wait.")
             return
@@ -273,9 +297,7 @@ class SlidePuzzleGUI:
         self.log_message("--- Benchmark Complete ---")
 
     def find_and_show_solution(self, heuristic):
-        """
-        Calculates the solution path using the specified heuristic and starts the animation.
-        """
+        """Calculates the solution path using the specified heuristic and starts the animation."""
         if self.is_solving:
             self.log_message("Solver is already running. Please wait or reset.")
             return
@@ -286,6 +308,7 @@ class SlidePuzzleGUI:
 
         start_state = self.get_current_state_2d()
 
+        # Check if already solved
         if start_state == self.goalState:
             self.log_message("Board is already solved. Aborting search.")
             self.is_solving = False
@@ -295,7 +318,6 @@ class SlidePuzzleGUI:
         # Start the Search Timer
         self.start_time = time.time()
         self.update_timer()
-
         self.current_heuristic = heuristic
 
         # Run the A* search
@@ -311,7 +333,6 @@ class SlidePuzzleGUI:
         # Stop the Search Timer
         self.start_time = None
         self.timer_label.config(text=f"Search Time: {solve_time:.4f}s")
-
         self.is_solving = False
 
         if path is not None:
@@ -333,9 +354,7 @@ class SlidePuzzleGUI:
             self.update_buttons()
 
     def animate_solution(self):
-        """
-        Displays the solution path on the board one step at a time.
-        """
+        """Displays the solution path on the board one step at a time."""
         if not self.solution_path:
             self.log_message("Animation stopped (no path).")
             self.is_solving = False
@@ -379,6 +398,9 @@ class SlidePuzzleGUI:
             self.update_buttons()
             self.check_win()
 
+    # -------------------------------------------------------------------------
+    # Entry point
+    # -------------------------------------------------------------------------
 
 if __name__ == "__main__":
     root = tk.Tk()
